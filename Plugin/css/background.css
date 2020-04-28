@@ -15,4 +15,5 @@
 #indicator {
 	position: fixed;
 	display: none;
+	z-index: 1;
 }

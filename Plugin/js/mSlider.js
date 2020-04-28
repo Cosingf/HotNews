@@ -1,9 +1,4 @@
-﻿/*
- * 侧边滑出弹层插件 mSlider.js
- * DH (https://denghao.me)
- * 2018-07
- */
-;
+﻿
 (function (window, undefined) {
   function mSlider(options) {
     this.opts = {

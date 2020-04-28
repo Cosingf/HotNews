@@ -10,9 +10,6 @@ xmlhttp.open("GET", "http://localhost:8080/getInfo/"
 xmlhttp.send();
 var obj = eval("(" + xmlhttp.responseText + ")");
 document.getElementById("name").innerHTML = "&nbsp;" + obj.account;
-if (obj.picture != "") {
-	document.getElementById("avatar").src = obj.picture;
-}
 document.getElementById("1").onclick =tab1;
 document.getElementById("3").onclick =tab3;
 

@@ -33,10 +33,11 @@
        "matches":["*://*/*"],
        "js":["js/before.js"],
        "run_at":"document_start"
-    },    
+    },
     {
        "matches":["*://*/*"],
        "js":["js/after.js"],
+       "css"     : ["css/search.css"],
        "run_at":"document_end"
     }]
 }

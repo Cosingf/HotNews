@@ -2,6 +2,29 @@ var range = null;
 var port = chrome.runtime.connect();
 var left = null;
 var topp = null;
+var obj2 = null;
+var isSearch = null;
+
+var sidebarDiv          = document.createElement("div");
+var resultDiv           = document.createElement("div");
+var navDiv              = document.createElement("div");
+sidebarDiv.id           = "sidebarDiv";
+resultDiv.id            = "resultDiv";
+navDiv.id               = "navDiv";
+navDiv.innerHTML        = "<button id = 'minButton' class = 'windowButton'>-</button><button id = 'maxButton' class = 'windowButton'>+</button>";
+sidebarDiv.appendChild(navDiv);
+sidebarDiv.appendChild(resultDiv);
+document.body.appendChild(sidebarDiv);
+
+
+document.getElementById("minButton").onclick=function(){
+	sidebarDiv.style.height = "25px";
+};
+
+document.getElementById("maxButton").onclick=function(){
+	sidebarDiv.style.height = window.innerHeight-50 + "px";
+};
+
 
 var available = false;
 port.onMessage.addListener(function(msg) {
@@ -10,15 +33,22 @@ port.onMessage.addListener(function(msg) {
 			available = true;
 		else
 			available = false;
-	}else if(msg.search!=undefined){
-		document.getElementById('indicator').style.display = "none";
+	}
+	if (msg.type == "searchOver"){
+		obj2 = msg.object;
+		isSearch = true;
+		if (msg.search == "done"){
+			displaySearchResults();
+		}
 	}
 });
+
 port.postMessage({
 	check : "test"
 });
+
 window.document.body.addEventListener("mouseup", function() {
-	document.getElementById('search1').style.display = "none";
+	document.getElementById('search1').style.display = "block";
 	if (available == true) {
 		if (window.rangy.getSelection().getRangeAt(0).toString() != "") {
 			document.getElementById('search1').style.display = "block";
@@ -39,12 +69,14 @@ window.document.body.addEventListener("mouseup", function() {
 					str = str + a.item(i).innerHTML;
 			}
 			range = window.rangy.getSelection().getRangeAt(0);
+			isSearch = false;
 			port.postMessage({
 				selection : str
 			});
 		}
 	}
 });
+
 
 document.onmousemove = function(ev) {
 	left = ev.clientX;
@@ -55,28 +87,46 @@ var para = document.createElement("div");
 para.id = "search1";
 var a1 = document.createElement("a");
 var i1 = document.createElement("img");
-i1.src = "http://readpeer.com/sites/default/files/users/10/images/search2.png";
+i1.src = "http://chuantu.xyz/t6/731/1587905975x2890211638.png";
 i1.width = "20";
 i1.height = "20";
 i1.title = "Search the selection";
 a1.appendChild(i1);
 para.appendChild(a1);
 
-var indicator = document.createElement("img");
-indicator.src = "http://readpeer.com/sites/all/themes/readpeer/images/indicator.gif";
-indicator.width = "40";
-indicator.height = "40";
-indicator.id = "indicator";
+
 
 document.body.appendChild(para);
-document.body.appendChild(indicator);
 
 a1.onclick = function() {
 	document.getElementById('search1').style.display = "none";
 	port.postMessage({
 		search : "keywords"
 	});
-	document.getElementById('indicator').style.display = "block";
-	document.getElementById('indicator').style.left = left + "px";
-	document.getElementById('indicator').style.top = topp + "px";
+
 };
+
+
+
+var displaySearchResults = function() {
+	var number_of_annotations = obj2.qaNum;
+	resultDiv.innerHTML = "";
+	for (var i = 0; i < number_of_annotations; i++) {
+		var innerHTML = "";
+		var annotationDiv = document.createElement("div");
+		innerHTML += "<div class='feeds'>";
+		innerHTML += "<div class='inner'><span class='yellow'><a> question: "
+			+ obj2.qas[i].question + "</a></span></div>";
+		innerHTML += "<div class='inner'><a> answer: " + obj2.qas[i].answer.substring(0, 150) + "</a></div></div>";
+		annotationDiv.innerHTML = innerHTML;
+		resultDiv.appendChild(annotationDiv);
+	}
+	var bodyWidth                        = window.innerWidth-320;
+	var sidebarHeight                    = window.innerHeight-50
+	document.body.style.width            = bodyWidth+'px';
+	sidebarDiv.style.width               = "310px";
+	sidebarDiv.style.height              = sidebarHeight+'px';
+};
+
+
+
